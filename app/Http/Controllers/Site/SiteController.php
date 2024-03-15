@@ -14,6 +14,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Str;
+use App\Models\StaffZone;
 
 class SiteController extends Controller
 {
@@ -73,6 +74,10 @@ class SiteController extends Controller
                 $address['gender'] = $user->customerProfile->gender;
 
                 cookie()->queue('address', json_encode($address), 5256000);
+
+                $staffZone = StaffZone::whereRaw('LOWER(name) LIKE ?', ["%" . strtolower($user->customerProfile->area) . "%"])->first();
+
+                cookie()->queue('currency', $staffZone->currency);
             }
         }
 
@@ -173,6 +178,9 @@ class SiteController extends Controller
 
             cookie()->queue('address', json_encode($address), 5256000);
             
+            $staffZone = StaffZone::whereRaw('LOWER(name) LIKE ?', ["%" . strtolower($request->area) . "%"])->first();
+
+            cookie()->queue('currency', $staffZone->currency);
 
             return response()->json("successfully save data.");
         }
@@ -200,6 +208,10 @@ class SiteController extends Controller
             $address['gender'] = '';
 
             cookie()->queue('address', json_encode($address), 5256000);
+
+            $staffZone = StaffZone::whereRaw('LOWER(name) LIKE ?', ["%" . strtolower($request->zone) . "%"])->first();
+
+            cookie()->queue('currency', $staffZone->currency);
 
             return redirect()->back();
         }

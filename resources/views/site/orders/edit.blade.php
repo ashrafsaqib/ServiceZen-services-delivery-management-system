@@ -159,8 +159,8 @@ $transport_charges = 0;
                                 </td>
                                 <td>{{ $service->name }}</td>
 
-                                <td>{{ isset($service->discount) ? 
-                                 $service->discount : $service->price }}</td>
+                                <td>@if(isset($service->discount))
+                                 @currency($service->discount) @else @currency($service->price)</td>
                                 <td>{{ $service->duration }}</td>
                             </tr>
                             @endforeach

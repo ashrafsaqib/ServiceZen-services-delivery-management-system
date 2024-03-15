@@ -19,6 +19,7 @@ use App\Mail\DeleteAccount;
 use Illuminate\Support\Facades\Mail;
 use App\Models\UserAffiliate;
 use Illuminate\Support\Facades\Cookie;
+use App\Models\StaffZone;
 
 class CustomerAuthController extends Controller
 {
@@ -205,6 +206,9 @@ class CustomerAuthController extends Controller
 
         cookie()->queue('address', json_encode($address), 5256000);
 
+        $staffZone = StaffZone::whereRaw('LOWER(name) LIKE ?', ["%" . strtolower($request->area) . "%"])->first();
+
+        cookie()->queue('currency', $staffZone->currency);
         return redirect()->back()
             ->with('success', 'Your Profile updated successfully');
     }

@@ -349,23 +349,23 @@
                     <table class="table">
                         <tr>
                             <td class="text-left"><strong> Service Total:</strong></td>
-                            <td><span id="sub_total"></span></td>
+                            <td><span id="sub_total">@currency(0)</span></td>
                         </tr>
                         <tr>
                             <td class="text-left"><strong> Coupon Discount:</strong></td>
-                            <td><span id="discount"></span></td>
+                            <td><span id="discount">@currency(0)</span></td>
                         </tr>
                         <tr>
                             <td class="text-left"><strong>Staff Charges:</strong></td>
-                            <td><span id="staff_charges"></span></td>
+                            <td><span id="staff_charges">@currency(0)</span></td>
                         </tr>
                         <tr>
                             <td class="text-left"><strong>Transport Charges:</strong></td>
-                            <td><span id="transport_charges"></span></td>
+                            <td><span id="transport_charges">@currency(0)</span></td>
                         </tr>
                         <tr>
                             <td class="text-left"><strong>Total:</strong></td>
-                            <td><span id="total_amount"></span></td>
+                            <td><span id="total_amount">@currency(0)</span></td>
                         </tr>
                     </table>
                 </div>
@@ -432,7 +432,7 @@
                 success: function (response) {
                     if (response.errors) {
                         var errorMessages = '<div class="alert alert-danger"><strong>Whoops! There were some problems with your input.</strong><ul>';
-                        console.log(response.errors);
+                        
                         $.each(response.errors, function (field, errors) {
                             $.each(errors, function (key, error) {
                                 errorMessages += '<li>' + error + '</li>';
@@ -445,12 +445,12 @@
                         $('#booking-step').hide();
                         $('#confirm-step').show();
                         $('html, body').scrollTop(0);
-
-                        $('#sub_total').text(response.sub_total);
-                        $('#discount').text(response.discount);
-                        $('#staff_charges').text(response.staff_charges);
-                        $('#transport_charges').text(response.transport_charges);
-                        $('#total_amount').text(response.total_amount);
+                        var currency = response.currency
+                        $('#sub_total').text(currency + parseFloat(response.sub_total).toFixed(2));
+                        $('#discount').text(currency + parseFloat(response.discount).toFixed(2));
+                        $('#staff_charges').text(currency + parseFloat(response.staff_charges).toFixed(2));
+                        $('#transport_charges').text(currency + parseFloat(response.transport_charges).toFixed(2));
+                        $('#total_amount').text(currency + parseFloat(response.total_amount).toFixed(2));
                         $('#staff_name').text(response.staff_name);
                         $('#time_slot').text(response.time_slot);
                         $('#selected_date').text(response.date);

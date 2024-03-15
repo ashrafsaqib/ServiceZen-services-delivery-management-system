@@ -319,6 +319,13 @@ class CheckOutController extends Controller
         
         cookie()->queue('address', json_encode($address), 5256000);
 
+        cookie()->queue('currency', $staffZone->currency);
+
+        if($staffZone->currency){
+            $currency = $staffZone->currency;
+        }else{
+            $currency = "AED";
+        }
         return response()->json([
             'sub_total' => $input['sub_total'],
             'discount' => $input['discount'],
@@ -330,6 +337,7 @@ class CheckOutController extends Controller
             'date' => $input['date'],
             'order_id' => $input['order_id'],
             'customer_type' => $customer_type,
+            'currency' => $currency
         ], 200);
     }
 
@@ -369,8 +377,6 @@ class CheckOutController extends Controller
             $serviceIds = [];
         }
 
-        $coupon_code = '';
-        
         $coupon_code = request()->cookie('coupon_code');
 
         $affiliate = Affiliate::where('code', request()->cookie('affiliate_code'))->first();

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 
 class Service extends Model
 {
@@ -57,5 +58,84 @@ class Service extends Model
     public function categories()
     {
         return $this->belongsToMany(ServiceCategory::class, 'service_to_category', 'service_id', 'category_id');
+    }
+
+    // protected function price(): Attribute
+    // {
+    //     return Attribute::make(
+    //         get: function ($price) {
+    //             $address = json_decode(request()->cookie('address'), true);
+    //             $area = $address['area'] ?? '';
+    //             $zone = StaffZone::where('name', $area)->first();
+
+    //             if ($zone && $zone->currency) {
+    //                 if ($zone->currency_rate > 0) {
+    //                     $price = $zone->currency_rate * $price;
+    //                 }
+    //                 $price += $zone->extra_charges;
+    //             }
+
+    //             ucfirst($price);
+    //         } 
+    //     );
+    // }
+
+    protected function price(): Attribute
+    {
+        return Attribute::make(
+            get: function ($price) {
+                $address = json_decode(request()->cookie('address'), true);
+
+                if (empty($address) || !is_array($address)) {
+                    return $price;
+                }
+
+                $area = $address['area'] ?? '';
+                $zone = StaffZone::where('name', $area)->first();
+
+                if ($zone) {
+                    if ($zone->currency_rate > 0) {
+                        $price = $zone->currency_rate * $price;
+                    }
+                
+                    $price += $zone->extra_charges;
+                
+                    return $price;
+                }
+
+                return number_format($price, 2, '.', ''); 
+            },
+        );
+    }
+
+    protected function discount(): Attribute
+    {
+        return Attribute::make(
+            get: function ($discount) {
+                if($discount == null){
+                    return null;
+                }
+                $address = json_decode(request()->cookie('address'), true);
+
+                if (empty($address) || !is_array($address)) {
+                    return $discount;
+                }
+
+                $area = $address['area'] ?? '';
+                $zone = StaffZone::where('name', $area)->first();
+
+                if ($zone) {
+                    if ($zone->currency_rate > 0) {
+                        $discount = $zone->currency_rate * $discount;
+                    }
+                
+                    $discount += $zone->extra_charges;
+                
+                    return $discount;
+                }
+
+                return number_format($discount, 2, '.', ''); 
+            },
+        );
     }
 }
